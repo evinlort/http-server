@@ -1,9 +1,12 @@
 import http.server
 import socketserver
-from router import Router
+from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlsplit
 
+from router import Router
+
 PORT = 8080
+
 
 class CustomHandler(http.server.BaseHTTPRequestHandler):
     def end_headers(self):
@@ -47,16 +50,24 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
 
         self.wfile.write(self.btext(f"Time is: {time.time()}"))
 
-    def btext(self, text):
+    @staticmethod
+    def btext(text):
         return text.encode()
 
-    def get_query(self, path):
+    @staticmethod
+    def get_query(path):
         return parse_qs(urlsplit(path).query)
 
-    def get_clean_path(self, path):
+    @staticmethod
+    def get_clean_path(path):
         return urlsplit(path).path
 
-with socketserver.TCPServer(("", PORT), CustomHandler) as httpd:
+
+class ThreadingSimpleServer(ThreadingMixIn, socketserver.TCPServer):
+    pass
+
+
+with ThreadingSimpleServer(("", PORT), CustomHandler) as httpd:
     try:
         print(f"Server is running on {PORT}")
         httpd.serve_forever()
