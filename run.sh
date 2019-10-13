@@ -1,3 +1,4 @@
 #!/bin/bash
 
-python3 server.py
+nohup python3 server.py > /dev/null &
+
