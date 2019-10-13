@@ -3,6 +3,7 @@ import socketserver
 from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlsplit
 
+from logger import log
 from router import Router
 
 PORT = 8080
@@ -15,6 +16,7 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
 
     def do_HEAD(self):
         print("Doing HEAD")
+        print(self.path)
         self.send_response(200)
         self.end_headers()
 
@@ -23,32 +25,27 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
         print(self.path)
         path = self.get_clean_path(self.path)
         resp = self.get_query(self.path)
-        print(resp)
         router = Router("get", path, query=resp)
         response = router.execute()
-        print(response)
-        # print(resp)
-        #
+
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        # if "test" in resp:
-        #     if "ok" in resp["test"]:
-        #         self.wfile.write(self.btext("<b>The best Code ever</b>"))
-        #         return
-        # self.wfile.write(self.btext("Hello, world!"))
         self.wfile.write(self.btext(response))
 
     def do_POST(self):
         print("POSTING")
-        print(self.path)
-
+        log.info(self.headers)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        log.info(post_body)
+        path = self.get_clean_path(self.path)
+        router = Router("post", path, query=None)
+        response = router.execute()
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        import time
-
-        self.wfile.write(self.btext(f"Time is: {time.time()}"))
+        self.wfile.write(self.btext(response))
 
     @staticmethod
     def btext(text):
@@ -68,11 +65,12 @@ class ThreadingSimpleServer(ThreadingMixIn, socketserver.TCPServer):
 
 
 with ThreadingSimpleServer(("", PORT), CustomHandler) as httpd:
+    log.info("Start server")
     try:
         print(f"Server is running on {PORT}")
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
-    print("CTRL+C pressed. Closing socket")
-    print(httpd.socket)
+    log.info("CTRL+C pressed. Closing socket")
+    log.info("******************************")
     httpd.server_close()

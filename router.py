@@ -3,6 +3,7 @@ from typing import Any
 
 import web
 
+
 class Router:
     def __init__(self, command, route, query=None):
         self.query = query
@@ -35,5 +36,5 @@ class Router:
                 return route.executor
 
 if __name__ == "__main__":
-    r = Router("GET", "/", {"test":["ok"]})
+    r = Router("POST", "/", {"test": "ok"})
     print(r.execute())
