@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from config import config
 from logger import log
-from router import Router
+from routing.router import Router
 
 
 class CustomHandler(http.server.BaseHTTPRequestHandler):

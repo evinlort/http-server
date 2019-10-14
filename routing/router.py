@@ -1,7 +1,7 @@
 from importlib import import_module
 from typing import Any
 
-import web
+from routing import web
 
 
 class Router:

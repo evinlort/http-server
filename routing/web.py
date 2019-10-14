@@ -1,5 +1,4 @@
-
-from route_tuple import *
+from routing.route_tuple import *
 
 routes = [
     Route("GET", "/", "test:ok"),
