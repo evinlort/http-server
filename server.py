@@ -3,10 +3,9 @@ import socketserver
 from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlsplit
 
+from config import config
 from logger import log
 from router import Router
-
-PORT = 8080
 
 
 class CustomHandler(http.server.BaseHTTPRequestHandler):
@@ -36,9 +35,8 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         print("POSTING")
         log.info(self.headers)
-        content_len = int(self.headers.get('content-length', 0))
-        post_body = self.rfile.read(content_len)
-        log.info(post_body)
+        body = self.get_post_body()
+        log.info(body)
         path = self.get_clean_path(self.path)
         router = Router("post", path, query=None)
         response = router.execute()
@@ -46,6 +44,15 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
         self.wfile.write(self.btext(response))
+
+    def get_post_body(self):
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        log.info(post_body)
+        content_type = self.headers.get('content-type')
+        if content_type == "application/json":
+            import json
+            return json.loads(post_body.decode("utf-8"))
 
     @staticmethod
     def btext(text):
@@ -64,10 +71,10 @@ class ThreadingSimpleServer(ThreadingMixIn, socketserver.TCPServer):
     pass
 
 
-with ThreadingSimpleServer(("", PORT), CustomHandler) as httpd:
+with ThreadingSimpleServer(("", config.getint("DEFAULT", "PORT")), CustomHandler) as httpd:
     log.info("Start server")
     try:
-        print(f"Server is running on {PORT}")
+        print(f"Server is running on {config.getint('DEFAULT', 'PORT')}")
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
