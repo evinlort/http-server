@@ -1,4 +1,8 @@
 
 def test(query):
-    print("I am in test function of basic controller")
     return "Text by ROUTER"
+
+
+def new(query):
+    import time
+    return f"Time is: {time.time()}"
