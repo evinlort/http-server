@@ -31,8 +31,11 @@ class Router:
 
     @staticmethod
     def get_executor(command: str, given_route: str) -> str:
+        print(command)
+        print(given_route)
         for route in web.routes:
             if route.command.upper() == command.upper() and route.route == given_route:
+                print(route)
                 return route.executor
 
 if __name__ == "__main__":
