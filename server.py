@@ -1,8 +1,8 @@
 import http.server
 import re
-import socket
 import socketserver
 from socketserver import ThreadingMixIn
+from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
 from config import config
@@ -23,7 +23,7 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         print("GETTING")
-        print(self.path)
+        log.info(self.path)
         path, resp = self.get_path_query()
         router = Router("get", path, query=resp)
         response = router.execute()
@@ -57,7 +57,7 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(self.btext(response))
 
-    def get_post_body(self):
+    def get_post_body(self) -> Any:
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         log.info(type(post_body))
@@ -89,7 +89,6 @@ with ThreadingSimpleServer(("", config.getint("DEFAULT", "PORT")), CustomHandler
     try:
         print(f"Server is running on {config.getint('DEFAULT', 'PORT')}")
         httpd.serve_forever()
-        httpd.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     except KeyboardInterrupt:
         httpd.shutdown()
         httpd.server_close()

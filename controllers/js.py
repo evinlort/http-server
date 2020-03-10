@@ -1,4 +1,4 @@
 def index(query):
     query = query.strip("/")
-    fd = open(query, "r")
+    fd = open("js/" + query, "r")
     return fd.read()

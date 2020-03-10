@@ -1,6 +1,7 @@
 from importlib import import_module
 from typing import Any
 
+from logger import log
 from routing import web
 
 
@@ -10,7 +11,6 @@ class Router:
         self.executor = self.get_executor(command, route)
 
     def execute(self):
-        print(self.executor)
         try:
             controller, method = self.executor.split(":")
         except AttributeError:
@@ -31,13 +31,11 @@ class Router:
 
     @staticmethod
     def get_executor(command: str, given_route: str) -> str:
-        print(command)
-        print(given_route)
         for route in web.routes:
             if route.command.upper() == command.upper() and route.route == given_route:
-                print(route)
                 return route.executor
+
 
 if __name__ == "__main__":
     r = Router("POST", "/", {"test": "ok"})
-    print(r.execute())
+    log.debug(r.execute())
