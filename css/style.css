@@ -10,9 +10,9 @@ html, body {
 }
 .row {
     background-color: lightgray;
-    display: flex;
-/*
-    flex-wrap: wrap;
-*/
     margin: 5px;
+}
+.nested {
+    border: 1px solid black;
+    border-radius: 50%;
 }
