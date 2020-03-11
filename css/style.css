@@ -1,3 +1,18 @@
+html, body {
+  height: 100%;
+
+}
+.hide {
+    display: none !important;
+}
 .red {
     color: red;
+}
+.row {
+    background-color: lightgray;
+    display: flex;
+/*
+    flex-wrap: wrap;
+*/
+    margin: 5px;
 }

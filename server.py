@@ -31,7 +31,7 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
         if ".css" in resp:
             self.send_header("Content-type", "text/css")
         elif ".js" in resp:
-            self.send_header("Content-type", "text/javascript")
+            self.send_header("Content-type", "application/javascript; charset=utf-8")
         else:
             self.send_header("Content-type", "text/html")
         self.end_headers()
