@@ -3,23 +3,14 @@ console.log("Script works");
 window.onload = function() {
 
 document.getElementById("add-field").addEventListener("click", function() {
-    var i = 0;
-    var clones = document.getElementsByClassName("clone-identificator");
-    while(i++ < clones.length) {
-        console.log(i-1);
-        var divs = clones[i-1].getElementsByTagName("div");
-        if(!divs[0].childNodes[0].value || !divs[1].childNodes[0].value) {
-            return false;
-        }
-    }
+    if(check_empties("clone-identificator")) return false;
     var template = document.getElementById("field-template");
     var clone = template.cloneNode(true)
     clone.removeAttribute("id")
     clone.classList.remove("hide");
     clone.classList.add("clone-identificator");
     clone.getElementsByTagName("div")[1].getElementsByClassName("nested")[0].addEventListener("click", function() {
-        console.log(clone.getElementsByTagName("div")[0].childNodes[0].value);
-        console.log(clone.getElementsByTagName("div")[1].childNodes[0].value);
+        if(check_empties("sub-nested")) return false;
         if(clone.getElementsByTagName("div")[0].childNodes[0].value && !clone.getElementsByTagName("div")[1].childNodes[0].value) {
             open_nested(this);
         }
@@ -71,12 +62,20 @@ function open_nested(elem) {
 }
 
 function check_empties(name) {
+    var i = 0;
     var clones = document.getElementsByClassName(name);
     while(i++ < clones.length) {
-        console.log(i-1);
         var divs = clones[i-1].getElementsByTagName("div");
-        if(!divs[0].childNodes[0].value || !divs[1].childNodes[0].value) {
-            return true;
+        var t = 0;
+        while(t++ < divs.length) {
+            var div = divs[t-1];
+            if(div.childNodes[0].tagName != "INPUT") continue;
+            if(!div.childNodes[0].value) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
     return false;
