@@ -58,7 +58,7 @@ function open_nested(elem) {
     newrow.appendChild(newcol1);
     newrow.appendChild(newcol2);
 
-    elem.parentElement.parentElement.parentElement.insertBefore(newrow, elem.parentElement.parentElement.nextElementSibling);
+    elem.parentElement.parentElement.parentElement.insertBefore(newrow, null);//elem.parentElement.parentElement.nextElementSibling);
 }
 
 function check_empties(name) {
