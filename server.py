@@ -61,10 +61,12 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         log.info(type(post_body))
+        if isinstance(post_body, bytes):
+            post_body = post_body.decode()
         content_type = self.headers.get('content-type')
         if content_type == "application/json":
             import json
-            return json.loads(post_body.decode("utf-8"))
+            return json.loads(post_body)
         return post_body
 
     @staticmethod

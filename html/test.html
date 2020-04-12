@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Start page</title>
@@ -11,6 +12,7 @@
     <link href="/css/style.css" rel="stylesheet" type="text/css">
     <script src="/js/script.js"></script>
 </head>
+
 <body>
 <div class="container">
     <div class="row">
@@ -18,18 +20,44 @@
             <div class="text-center">Hello Evg!</div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-6 col-sm-6">Hello Evg!</div>
-        <div class="col-md-6 col-sm-6">
-            <input>
+    <form id="insert" method="POST">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">Name</div>
+            <div class="col-md-6 col-sm-6">
+                <input name="name">
+            </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-6">Quantity</div>
+            <div class="col-md-6 col-sm-6">
+                <input name="quantity">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-6">Units</div>
+            <div class="col-md-6 col-sm-6">
+                <input name="units">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-6">Expiration date</div>
+            <div class="col-md-6 col-sm-6">
+                <input name="expiration">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-6">Note</div>
+            <div class="col-md-6 col-sm-6">
+                <input name="note">
+            </div>
+        </div>
+    </form>
     <div class="row">
-        <div class="col-12"> Hello Evg!</div>
-    </div>
-    <div class="row">
-        <div class="col-12"> Hello Evg!</div>
+        <div class="col-md-12 col-sm-12">
+            <button form="insert" type="submit">Send</button>
+        </div>
     </div>
 </div>
 </body>
+
 </html>
