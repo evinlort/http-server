@@ -31,10 +31,10 @@ class Validate:
             "units",
             "expiration",
         ]
-        for key in self.data.keys():
-            if key in required:
-                return True
-        return False
+        for key in required:
+            if key not in self.data.keys():
+                return False
+        return True
 
     def __date_reformat(self):
         """
