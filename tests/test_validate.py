@@ -7,7 +7,7 @@ class TestValidate:
     def test_validate_insertation1(self):
         json = {
             "name": "Potato",
-            "quantity": 14,
+            "quantity": 14.3,
             "units": "unit",
             "expiration": "2020-05-13",
             "note": "In green bag"

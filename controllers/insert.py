@@ -1,3 +1,5 @@
+import json
+
 from logger import log
 from logic.db import DB
 from logic.validate import Validate
@@ -6,7 +8,12 @@ from logic.validate import Validate
 def new(query):
     log.debug(query)
     dict_query = parse_query_to_dict(query)
-    return DB().put(Validate(dict_query).insert())
+    return DB("product").put(Validate(dict_query).insert())
+
+
+def new_unit(query):
+    log.debug(query)
+    return json.dumps(DB("units").all())
 
 
 def parse_query_to_dict(query):

@@ -19,6 +19,7 @@ class Validate:
             return None
         if not self.__is_required_not_empty():
             return None
+        self.__quantity_reformat()
         self.__date_reformat()
         return self.data
 
@@ -43,6 +44,14 @@ class Validate:
             if not self.data[key]:
                 return False
         return True
+
+    def __quantity_reformat(self):
+        """
+        Reformat quantity from str to float
+        :return: None
+        :rtype: None
+        """
+        self.data["quantity"] = float(self.data["quantity"])
 
     def __date_reformat(self):
         """

@@ -1,11 +1,13 @@
+from typing import List
+
 import pymongo
 from bson import ObjectId
 
 
 class DB:
-    def __init__(self):
+    def __init__(self, table):
         client = pymongo.MongoClient()
-        self.db = client["evg1"].product
+        self.db = client["evg1"][table]
 
     def get(self, _id: str) -> dict:
         """
@@ -25,6 +27,8 @@ class DB:
         :return: ObjectID as string
         :rtype: str
         """
+        if not data:
+            return "Validation did not passed."
         return str(self.db.insert_one(data).inserted_id)
 
     def delete(self, _id: str) -> int:
@@ -36,3 +40,11 @@ class DB:
         :rtype: int
         """
         return self.db.delete_one({"_id": ObjectId(oid=_id)}).deleted_count
+
+    def all(self) -> List[dict]:
+        """
+        Get all records from collection as list of dictionaries
+        :return: List of dicts - all records from collection
+        :rtype: List[dict]
+        """
+        return self.db.find({})
