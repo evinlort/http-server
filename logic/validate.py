@@ -1,6 +1,8 @@
 import datetime
 from typing import Optional
 
+from .db import DB
+
 
 class Validate:
     def __init__(self, json: dict):
@@ -21,6 +23,7 @@ class Validate:
             return None
         self.__quantity_reformat()
         self.__date_reformat()
+        self.__check_units()
         return self.data
 
     def __is_required_at_place(self) -> bool:
@@ -63,6 +66,12 @@ class Validate:
         date_list = raw_date.split("-")  # len(date_list) must be equal to 3
         date = datetime.datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]))
         self.data["expiration"] = date
+
+    def __check_units(self):
+        unit = self.data["units"]
+        query = {"name": unit}
+        if not DB("units").getby(query):
+            DB("units").put(query)
 
     @staticmethod
     def __get_required():

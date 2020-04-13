@@ -31,3 +31,8 @@ class TestDB:
     def test_all1(self):
         ret = DB("units").all()
         assert ret[0]["name"] == "unit"
+
+    def test_getby1(self):
+        query = {"name": "unit"}
+        ret = DB("units").getby(query)
+        assert ret["name"] == "unit"

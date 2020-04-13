@@ -11,13 +11,23 @@ class DB:
 
     def get(self, _id: str) -> dict:
         """
-        Get product information
+        Get one collection record information by ObjectId represented by string
         :param _id: hash id (ObjectId as sting)
         :type _id: str
-        :return: Product data
+        :return: Record data
         :rtype: dict
         """
         return self.db.find_one({"_id": ObjectId(oid=_id)})
+
+    def getby(self, query: dict) -> dict:
+        """
+        Get one collection record information by query represented by dictionary
+        :param query: Query dictionary
+        :type query: dict
+        :return: Record date
+        :rtype: dict
+        """
+        return self.db.find_one(query)
 
     def put(self, data: dict) -> str:
         """
@@ -47,4 +57,4 @@ class DB:
         :return: List of dicts - all records from collection
         :rtype: List[dict]
         """
-        return self.db.find({})
+        return list(self.db.find({}))

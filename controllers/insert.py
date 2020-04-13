@@ -11,9 +11,14 @@ def new(query):
     return DB("product").put(Validate(dict_query).insert())
 
 
-def new_unit(query):
+def get_units(query):
     log.debug(query)
-    return json.dumps(DB("units").all())
+    to_ret = list()
+    for record in list(DB("units").all()):
+        del record["_id"]
+        to_ret.append(record["name"])
+    log.debug(to_ret)
+    return json.dumps(to_ret)
 
 
 def parse_query_to_dict(query):
