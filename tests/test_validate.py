@@ -24,3 +24,14 @@ class TestValidate:
         }
         checked = Validate(json).insert()
         assert isinstance(checked, type(None))
+
+    def test_validate_insertation_required_empty1(self):
+        json = {
+            "name": "Potato",
+            "units": "unit",
+            "quantity": 0,
+            "expiration": "",
+            "note": "In green bag"
+        }
+        checked = Validate(json).insert()
+        assert isinstance(checked, type(None))

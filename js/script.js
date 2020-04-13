@@ -1,2 +1,2 @@
 console.log("Script works");
-document.write("Destroy!!!");
+//document.write("Destroy!!!");

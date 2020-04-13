@@ -6,8 +6,7 @@ from logic.validate import Validate
 def new(query):
     log.debug(query)
     dict_query = parse_query_to_dict(query)
-    DB().put(Validate(dict_query).insert())
-    return ""
+    return DB().put(Validate(dict_query).insert())
 
 
 def parse_query_to_dict(query):

@@ -5,6 +5,7 @@ from typing import Optional
 class Validate:
     def __init__(self, json: dict):
         self.data = json
+        self._required = self.__get_required()
 
     def insert(self) -> Optional[dict]:
         """
@@ -16,6 +17,8 @@ class Validate:
         """
         if not self.__is_required_at_place():
             return None
+        if not self.__is_required_not_empty():
+            return None
         self.__date_reformat()
         return self.data
 
@@ -25,14 +28,19 @@ class Validate:
         :return: True or False
         :rtype: bool
         """
-        required = [
-            "name",
-            "quantity",
-            "units",
-            "expiration",
-        ]
-        for key in required:
+        for key in self._required:
             if key not in self.data.keys():
+                return False
+        return True
+
+    def __is_required_not_empty(self) -> bool:
+        """
+        Check if required fields anr not empty (have no value)
+        :return: True or False
+        :rtype: bool
+        """
+        for key in self._required:
+            if not self.data[key]:
                 return False
         return True
 
@@ -46,3 +54,12 @@ class Validate:
         date_list = raw_date.split("-")  # len(date_list) must be equal to 3
         date = datetime.datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]))
         self.data["expiration"] = date
+
+    @staticmethod
+    def __get_required():
+        return [
+            "name",
+            "quantity",
+            "units",
+            "expiration",
+        ]
