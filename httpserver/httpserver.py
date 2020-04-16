@@ -26,6 +26,12 @@ class HttpServer:
     def get_route(self) -> str:
         return self._routing
 
+    def set_controllers(self, folder_path: str):
+        self._controllers = folder_path
+
+    def get_controllers(self) -> str:
+        return self._controllers
+
     def __check_routing(self, route: str):
         if route[-3:] != ".py":
             route = f"{route}.py"

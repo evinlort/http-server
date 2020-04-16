@@ -36,6 +36,10 @@ class TestMain:
             h.HttpServer(80)
         assert "takes 1 positional argument but 2 were given" in str(excinfo.value)
 
+    def test_controllers_folder_exists(self):
+        hs = h.HttpServer(port=80, routing="../routing/web", controllers="../controllers")
+        assert hs.get_controllers == "../controllers"
+
 
 class TestSetterGetters:
     def test_set_port_by_setter(self):
@@ -53,3 +57,8 @@ class TestSetterGetters:
             hs = h.HttpServer(routing="../routing/web")
             hs.set_router("wX")
         assert hs.get_route() == "../routing/web.py"
+
+    def test_controllers__by_setter(self):
+        hs = h.HttpServer(port=80, routing="../routing/web")
+        hs.set_controllers("../controllers")
+        assert hs.get_controllers() == "../controllers"
