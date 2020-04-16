@@ -30,13 +30,26 @@ class TestMain:
         hs = h.HttpServer(port=80, routing="../routing/web")
         assert hs.get_port() == 80
 
-    def test_set_port_by_setter(self):
-        hs = h.HttpServer(routing="../routing/web")
-        hs.set_port(80)
-        assert hs.get_port() == 80
-
     def test_faulty_port_definition(self):
         with pytest.raises(TypeError) as excinfo:
             # noinspection PyArgumentList
             h.HttpServer(80)
         assert "takes 1 positional argument but 2 were given" in str(excinfo.value)
+
+
+class TestSetterGetters:
+    def test_set_port_by_setter(self):
+        hs = h.HttpServer(routing="../routing/web")
+        hs.set_port(80)
+        assert hs.get_port() == 80
+
+    def test_set_router_by_setter(self):
+        hs = h.HttpServer(routing="../routing/web")
+        hs.set_router("w")
+        assert hs.get_route() == "w.py"
+
+    def test_fault_set_router_by_setter(self):
+        with pytest.raises(RouterFileNotFoundException) as err:
+            hs = h.HttpServer(routing="../routing/web")
+            hs.set_router("wX")
+        assert hs.get_route() == "../routing/web.py"

@@ -7,22 +7,28 @@ class HttpServer:
     def __init__(self, *, port: int = 8080, routing: str = "routing/web", controllers: str = "controllers",
                  css: str = "css", js: str = "js", html: str = "html", log: str = "httpserver.log"):
         self._port = int(port)
-        self._routing = routing
+        self.__check_routing(routing)
         self._controllers = controllers
         self._css = css
         self._js = js
         self.__html = html
         self._log = log
-        self.__check_routing()
 
     def set_port(self, port: int):
         self._port = int(port)
 
-    def get_port(self):
+    def get_port(self) -> int:
         return self._port
 
-    def __check_routing(self):
-        if self._routing[-3:] != ".py":
-            self._routing = f"{self._routing}.py"
-        if not os.path.exists(self._routing):
+    def set_router(self, route: str):
+        self.__check_routing(route)
+
+    def get_route(self) -> str:
+        return self._routing
+
+    def __check_routing(self, route: str):
+        if route[-3:] != ".py":
+            route = f"{route}.py"
+        if not os.path.exists(route):
             raise RouterFileNotFoundException
+        self._routing = route
