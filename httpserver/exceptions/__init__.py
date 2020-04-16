@@ -1,12 +1,3 @@
-class WebFileNotFound(Exception):
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
+class RouterFileNotFoundException(Exception):
     def __str__(self):
-        if self.message:
-            return 'WebFileNotFound, {0} '.format(self.message)
-        else:
-            return 'WebFileNotFound has been raised'
+        return 'Router file is not found.'
