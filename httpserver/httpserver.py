@@ -5,13 +5,14 @@ from .exceptions import *
 
 class HttpServer:
     def __init__(self, *, port: int = 8080, routing: str = "routing/web", controllers: str = "controllers",
-                 css: str = "css", js: str = "js", html: str = "html"):
+                 css: str = "css", js: str = "js", html: str = "html", log: str = "httpserver.log"):
         self._port = int(port)
         self._routing = routing
         self._controllers = controllers
         self._css = css
         self._js = js
         self.__html = html
+        self._log = log
         self.__check_routing()
 
     def set_port(self, port: int):
