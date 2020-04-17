@@ -9,6 +9,9 @@ class Server:
         self.__folder_check(controllers)
         self._controllers = controllers
 
+    def get_port(self) -> int:
+        return self._port
+
     def __router_check(self):
         if self._router[-3:] != ".py":
             self._router += ".py"
