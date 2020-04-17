@@ -12,11 +12,13 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/evinlort/http-server",
-    packages=setuptools.find_packages(include=["httpserver", "httpserver.*"]),
+    packages=setuptools.find_packages(include=["*", "httpserver", "httpserver.*"]),
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
+    license='MIT',
+    zip_safe=False
 )
