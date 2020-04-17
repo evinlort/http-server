@@ -1,5 +1,7 @@
 import os
 
+import httpserver.server.server as srv
+
 
 class Server:
     def __init__(self, *, port: int = 8080, router: str = "router/web", controllers: str = "controllers"):
@@ -11,6 +13,9 @@ class Server:
 
     def get_port(self) -> int:
         return self._port
+
+    def get_router(self) -> str:
+        return self._router
 
     def __router_check(self):
         if self._router[-3:] != ".py":
@@ -31,3 +36,7 @@ class Server:
         if os.path.exists(folder_path):
             return
         os.makedirs(folder_path)
+
+    def run(self):
+        http_server = srv.ThreadingServer(self)
+        srv.run(http_server)

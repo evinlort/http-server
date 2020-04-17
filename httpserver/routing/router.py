@@ -1,12 +1,13 @@
 from importlib import import_module
 from typing import Any
 
-from logger import log
-from routing import web
+
+# from httpserver.routing import web
 
 
 class Router:
-    def __init__(self, command, route, query=None):
+    def __init__(self, command, route, query=None, *, web):
+        self.web = web
         self.query = query
         self.executor = self.get_executor(command, route)
 
@@ -29,13 +30,7 @@ class Router:
         except AttributeError:
             pass
 
-    @staticmethod
-    def get_executor(command: str, given_route: str) -> str:
-        for route in web.routes:
+    def get_executor(self, command: str, given_route: str) -> str:
+        for route in self.web.routes:
             if route.command.upper() == command.upper() and route.route == given_route:
                 return route.executor
-
-
-if __name__ == "__main__":
-    r = Router("POST", "/", {"test": "ok"})
-    log.debug(r.execute())

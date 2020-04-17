@@ -6,9 +6,11 @@ from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
 # from config import config
-from httpserver import Server
-from logger import log
-from routing.router import Router
+# from httpserver import Server
+from httpserver.logger import log
+from httpserver.routing.router import Router
+
+_config = None
 
 
 # noinspection PyPep8Naming
@@ -24,11 +26,13 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        global _config
         print("GETTING")
         log.info(self.path)
         path, resp = self.get_path_query()
-        router = Router("get", path, query=resp)
+        router = Router("get", path, query=resp, web=_config.get_router())
         response = router.execute()
+        log.info(response)
         self.send_response(200)
         if ".css" in resp:
             self.send_header("Content-type", "text/css")
@@ -52,7 +56,7 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         body = self.get_post_body()
         log.info(body)
         path = self.get_clean_path(self.path)
-        router = Router("post", path, query=body)
+        router = Router("post", path, query=body, web=_config.get_router())
         response = router.execute()
         self.send_response(200)
         self.send_header("Content-type", "text/html")
@@ -83,22 +87,28 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
 
 
 class ThreadingServer(ThreadingMixIn, socketserver.TCPServer):
-    def __init__(self, config: Server):
+    def __init__(self, config):
+        global _config
+        _config = config
         self.config = config
         super().__init__(("", config.get_port()), RequestsHandler)
+
+    def __enter__(self):
+        return self
 
     allow_reuse_address = True
 
 
-with ThreadingServer as httpd:
-    log.info("Start server")
-    try:
-        print(f"Server is running on {httpd.config.get_port()}")
-        httpd.serve_forever()
-    except KeyboardInterrupt:
+def run(threading_server):
+    with threading_server as httpd:
+        log.info("Start server")
+        try:
+            log.info(f"Server is running on {httpd.config.get_port()}")
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            httpd.shutdown()
+            httpd.server_close()
+        log.info("CTRL+C pressed. Closing socket")
+        log.info("******************************")
         httpd.shutdown()
         httpd.server_close()
-    log.info("CTRL+C pressed. Closing socket")
-    log.info("******************************")
-    httpd.shutdown()
-    httpd.server_close()
