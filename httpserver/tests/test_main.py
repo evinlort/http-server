@@ -38,27 +38,35 @@ class TestMain:
 
     def test_controllers_folder_exists(self):
         hs = h.HttpServer(port=80, routing="../routing/web", controllers="../controllers")
-        assert hs.get_controllers == "../controllers"
+        assert hs.get_controllers() == "../controllers"
+
+    def test_controllers_folder_not_exists(self):
+        with pytest.raises(ControllersFolderNotExists) as err:
+            hs = h.HttpServer(port=80, routing="../routing/web", controllers="controllersXX")
+        assert hs.get_controllers() != "controllersXX"
 
 
 class TestSetterGetters:
     def test_set_port_by_setter(self):
-        hs = h.HttpServer(routing="../routing/web")
+        hs = h.HttpServer(routing="../routing/web", controllers="../controllers", css="../css", js="../js",
+                          html="../html")
         hs.set_port(80)
         assert hs.get_port() == 80
 
     def test_set_router_by_setter(self):
-        hs = h.HttpServer(routing="../routing/web")
+        hs = h.HttpServer(routing="../routing/web", controllers="../controllers", css="../css", js="../js",
+                          html="../html")
         hs.set_router("w")
         assert hs.get_route() == "w.py"
 
     def test_fault_set_router_by_setter(self):
         with pytest.raises(RouterFileNotFoundException) as err:
-            hs = h.HttpServer(routing="../routing/web")
+            hs = h.HttpServer(routing="../routing/web", controllers="../controllers", css="../css", js="../js",
+                              html="../html")
             hs.set_router("wX")
         assert hs.get_route() == "../routing/web.py"
 
     def test_controllers__by_setter(self):
-        hs = h.HttpServer(port=80, routing="../routing/web")
+        hs = h.HttpServer(port=80, routing="../routing/web", css="../css", js="../js", html="../html")
         hs.set_controllers("../controllers")
         assert hs.get_controllers() == "../controllers"
