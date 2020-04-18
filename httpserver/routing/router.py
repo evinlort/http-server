@@ -6,8 +6,9 @@ from typing import Any
 
 
 class Router:
-    def __init__(self, command, route, query=None, *, web):
-        self.web = web
+    def __init__(self, command, route, query=None, *, web, controllers):
+        self.web = import_module(".".join(web[:-3].split("/")))
+        self.controllers = controllers
         self.query = query
         self.executor = self.get_executor(command, route)
 
@@ -19,10 +20,9 @@ class Router:
         controller_method = self.execute_controller_method(controller, method)
         return controller_method(self.query)
 
-    @staticmethod
-    def execute_controller_method(controller: str, method: str) -> Any:
+    def execute_controller_method(self, controller: str, method: str) -> Any:
         try:
-            imported_module = import_module("controllers." + controller.lower())
+            imported_module = import_module(f"{self.controllers}.{controller.lower()}")
             controller_method = getattr(imported_module, method.lower())
             return controller_method
         except ModuleNotFoundError:

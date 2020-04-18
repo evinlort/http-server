@@ -17,6 +17,9 @@ class Server:
     def get_router(self) -> str:
         return self._router
 
+    def get_controllers(self) -> str:
+        return self._controllers
+
     def __router_check(self):
         if self._router[-3:] != ".py":
             self._router += ".py"

@@ -10,8 +10,6 @@ from urllib.parse import parse_qs, urlsplit
 from httpserver.logger import log
 from httpserver.routing.router import Router
 
-_config = None
-
 
 # noinspection PyPep8Naming
 class RequestsHandler(http.server.BaseHTTPRequestHandler):
@@ -26,11 +24,11 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        global _config
+        _config = Any.storage
         print("GETTING")
         log.info(self.path)
         path, resp = self.get_path_query()
-        router = Router("get", path, query=resp, web=_config.get_router())
+        router = Router("get", path, query=resp, web=_config.get_router(), controllers=_config.get_controllers())
         response = router.execute()
         log.info(response)
         self.send_response(200)
@@ -51,12 +49,13 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         return self.get_clean_path(self.path), self.get_query(self.path)
 
     def do_POST(self):
+        _config = Any.storage
         print("POSTING")
         log.info(self.headers)
         body = self.get_post_body()
         log.info(body)
         path = self.get_clean_path(self.path)
-        router = Router("post", path, query=body, web=_config.get_router())
+        router = Router("post", path, query=body, web=_config.get_router(), controllers=_config.get_controllers())
         response = router.execute()
         self.send_response(200)
         self.send_header("Content-type", "text/html")
@@ -88,8 +87,7 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
 
 class ThreadingServer(ThreadingMixIn, socketserver.TCPServer):
     def __init__(self, config):
-        global _config
-        _config = config
+        Any.storage = config
         self.config = config
         super().__init__(("", config.get_port()), RequestsHandler)
 
