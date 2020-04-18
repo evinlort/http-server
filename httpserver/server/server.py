@@ -24,22 +24,25 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        _config = Any.storage
-        print("GETTING")
-        log.info(self.path)
-        path, resp = self.get_path_query()
-        router = Router("get", path, query=resp, web=_config.get_router(), controllers=_config.get_controllers())
-        response = router.execute()
-        log.info(response)
-        self.send_response(200)
-        if ".css" in resp:
-            self.send_header("Content-type", "text/css")
-        elif ".js" in resp:
-            self.send_header("Content-type", "text/javascript")
-        else:
-            self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write(self.btext(response))
+        try:
+            _config = Any.storage
+            print("GETTING")
+            log.info(self.path)
+            path, resp = self.get_path_query()
+            router = Router("get", path, query=resp, web=_config.get_router(), controllers=_config.get_controllers())
+            response = router.execute()
+            log.info(response)
+            self.send_response(200)
+            if ".css" in resp:
+                self.send_header("Content-type", "text/css")
+            elif ".js" in resp:
+                self.send_header("Content-type", "text/javascript")
+            else:
+                self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(self.btext(response))
+        except Exception as e:
+            log.exception(str(e))
 
     def get_path_query(self):
         regex = r"(\/[a-z]{1,})(\/\w*.[a-z]{2,4})"

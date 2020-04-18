@@ -1,8 +1,9 @@
 from importlib import import_module
 from typing import Any
 
-from logger import log
 from routing import web
+
+from logger import log
 
 
 class Router:

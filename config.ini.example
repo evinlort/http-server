@@ -1,4 +1,0 @@
-[DEFAULT]
-port = 8080
-
-LogFileName = server.log
