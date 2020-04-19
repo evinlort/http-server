@@ -1,2 +1,2 @@
-def ok(query):
+def index(query):
     return "<div>Works!</div>"

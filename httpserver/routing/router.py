@@ -1,6 +1,9 @@
 from importlib import import_module
 from typing import Any
 
+from httpserver.logger import log
+from httpserver.routing.route_tuple import *
+
 
 # from httpserver.routing import web
 
@@ -32,5 +35,9 @@ class Router:
 
     def get_executor(self, command: str, given_route: str) -> str:
         for route in self.web.routes:
+            try:
+                route = Route(route[0], route[1], route[2])
+            except Exception as e:
+                log.exception(str(e))
             if route.command.upper() == command.upper() and route.route == given_route:
                 return route.executor
