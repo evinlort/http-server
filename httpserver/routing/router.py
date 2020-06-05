@@ -5,9 +5,6 @@ from httpserver.logger import log
 from httpserver.routing.route_tuple import *
 
 
-# from httpserver.routing import web
-
-
 class Router:
     def __init__(self, command, route, query=None, *, web, controllers):
         self.web = import_module(".".join(web[:-3].split("/")))

@@ -1,14 +1,12 @@
 import http.server
-import re
 import socketserver
 from socketserver import ThreadingMixIn
 from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
-# from config import config
-# from httpserver import Server
 from httpserver.logger import log
-from httpserver.routing.router import Router
+from .methods.get import Get
+from .methods.post import Post
 
 
 # noinspection PyPep8Naming
@@ -24,56 +22,10 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        try:
-            _config = Any.storage
-            print("GETTING")
-            log.info(self.path)
-            path, resp = self.get_path_query()
-            router = Router("get", path, query=resp, web=_config.get_router(), controllers=_config.get_controllers())
-            response = router.execute()
-            log.info(response)
-            self.send_response(200)
-            if ".css" in resp:
-                self.send_header("Content-type", "text/css")
-            elif ".js" in resp:
-                self.send_header("Content-type", "text/javascript")
-            else:
-                self.send_header("Content-type", "text/html")
-            self.end_headers()
-            self.wfile.write(self.btext(response))
-        except Exception as e:
-            log.exception(str(e))
-
-    def get_path_query(self):
-        regex = r"(\/[a-z]{1,})(\/\w*.[a-z]{2,4})"
-        matches = re.findall(regex, self.path, re.MULTILINE)
-        if len(matches) == 1 and len(matches[0]) == 2:
-            return self.get_clean_path(matches[0][0]), matches[0][1]
-        return self.get_clean_path(self.path), self.get_query(self.path)
+        Get(self, Any.storage)
 
     def do_POST(self):
-        _config = Any.storage
-        print("POSTING")
-        log.info(self.headers)
-        body = self.get_post_body()
-        log.info(body)
-        path = self.get_clean_path(self.path)
-        router = Router("post", path, query=body, web=_config.get_router(), controllers=_config.get_controllers())
-        response = router.execute()
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write(self.btext(response))
-
-    def get_post_body(self) -> Any:
-        content_len = int(self.headers.get('content-length', 0))
-        post_body = self.rfile.read(content_len)
-        log.info(type(post_body))
-        content_type = self.headers.get('content-type')
-        if content_type == "application/json":
-            import json
-            return json.loads(post_body.decode("utf-8"))
-        return post_body
+        Post(self, Any.storage)
 
     @staticmethod
     def btext(text):
@@ -81,7 +33,15 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
 
     @staticmethod
     def get_query(path):
-        return parse_qs(urlsplit(path).query)
+        temp = parse_qs(urlsplit(path).query)
+        print(temp)
+        build = dict()
+        for k, v in temp.items():
+            if len(v) == 1:
+                build[k] = v[0]
+            else:
+                build[k] = v
+        return build
 
     @staticmethod
     def get_clean_path(path):
