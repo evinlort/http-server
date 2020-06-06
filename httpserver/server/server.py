@@ -2,7 +2,6 @@ import http.server
 import socketserver
 from socketserver import ThreadingMixIn
 from typing import Any
-from urllib.parse import parse_qs, urlsplit
 
 from httpserver.logger import log
 from .methods.get import Get
@@ -22,30 +21,25 @@ class RequestsHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        Get(self, Any.storage)
+        response = Get(self.path, Any.storage).doing_get()
+        self.__send_response(response)
 
     def do_POST(self):
-        Post(self, Any.storage)
+        content_len = int(self.headers.get('content-length', 0))
+        post_data = {
+            "headers": self.headers,
+            "post_body": self.rfile.read(content_len),
+            "path": self.path
+        }
+        response = Post(post_data, Any.storage).doing_post()
+        self.__send_response(response)
 
-    @staticmethod
-    def btext(text):
-        return text.encode()
-
-    @staticmethod
-    def get_query(path):
-        temp = parse_qs(urlsplit(path).query)
-        print(temp)
-        build = dict()
-        for k, v in temp.items():
-            if len(v) == 1:
-                build[k] = v[0]
-            else:
-                build[k] = v
-        return build
-
-    @staticmethod
-    def get_clean_path(path):
-        return urlsplit(path).path
+    def __send_response(self, response):
+        self.send_response(response["code"])
+        for name, value in response["headers"].items():
+            self.send_header(name, value)
+        self.end_headers()
+        self.wfile.write(response["message"])
 
 
 class ThreadingServer(ThreadingMixIn, socketserver.TCPServer):

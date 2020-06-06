@@ -1,20 +1,20 @@
 import re
+from urllib.parse import parse_qs, urlsplit
 
 from httpserver.logger import log
 from httpserver.routing.router import Router
 
 
 class Get:
-    def __init__(self, request_handler, config):
-        self.rh = request_handler
+    def __init__(self, path, config):
+        self.path = path
         self.conf = config
-        self.doing_get()
 
-    def doing_get(self):
+    def doing_get(self) -> dict:
         try:
             print("GETTING")
-            log.info(self.rh.path)
-            path, query = get_path_query(self.rh)
+            log.info(self.path)
+            path, query = self.__get_path_query()
             router = Router(
                 "get",
                 path,
@@ -24,22 +24,41 @@ class Get:
             )
             response = router.execute()
             log.info(response)
-            self.rh.send_response(200)
+            headers = dict()
             if ".css" in query:
-                self.rh.send_header("Content-type", "text/css")
+                headers["Content-type"] = "text/css"
             elif ".js" in query:
-                self.rh.send_header("Content-type", "text/javascript")
+                headers["Content-type"] = "text/javascript"
             else:
-                self.rh.send_header("Content-type", "text/html")
-            self.rh.end_headers()
-            self.rh.wfile.write(self.rh.btext(response))
+                headers["Content-type"] = "text/html"
+            return {
+                "code": 200,
+                "headers": headers,
+                "message": response.encode()
+            }
         except Exception as e:
             log.exception(str(e))
+            return {
+                "code": 500,
+                "headers": {"Content-type": "application/json"},
+                "message": str(e).encode()
+            }
 
+    def __get_path_query(self):
+        regex = r"(\/[a-z]{1,})(\/\w*.[a-z]{2,4})"
+        matches = re.findall(regex, self.path, re.MULTILINE)
+        if len(matches) == 1 and len(matches[0]) == 2:
+            return urlsplit(matches[0][0]).path, matches[0][1]
+        return urlsplit(self.path).path, self.get_query(self.path)
 
-def get_path_query(request_handler):
-    regex = r"(\/[a-z]{1,})(\/\w*.[a-z]{2,4})"
-    matches = re.findall(regex, request_handler.path, re.MULTILINE)
-    if len(matches) == 1 and len(matches[0]) == 2:
-        return request_handler.get_clean_path(matches[0][0]), matches[0][1]
-    return request_handler.get_clean_path(request_handler.path), request_handler.get_query(request_handler.path)
+    @staticmethod
+    def get_query(path):
+        temp = parse_qs(urlsplit(path).query)
+        print(temp)
+        build = dict()
+        for k, v in temp.items():
+            if len(v) == 1:
+                build[k] = v[0]
+            else:
+                build[k] = v
+        return build
